@@ -1,0 +1,69 @@
+# Enable gzip compression
+php_value output_handler ob_gzhandler
+AddOutputFilterByType DEFLATE text/xml
+AddOutputFilterByType DEFLATE text/css
+AddOutputFilterByType DEFLATE application/xml
+AddOutputFilterByType DEFLATE application/xhtml+xml
+AddOutputFilterByType DEFLATE application/rss+xml
+AddOutputFilterByType DEFLATE application/javascript
+AddOutputFilterByType DEFLATE application/x-javascript
+
+# CACHING
+# 1 YEAR
+<FilesMatch "\.(ico|pdf|flv)$">
+Header set Cache-Control "max-age=29030400, public"
+</FilesMatch>
+# 1 WEEK
+<FilesMatch "\.(jpg|jpeg|png|gif|swf)$">
+Header set Cache-Control "max-age=604800, public"
+</FilesMatch>
+# 1 WEEK
+<FilesMatch "\.(xml|txt|css|js)$">
+Header set Cache-Control "max-age=604800, public"
+</FilesMatch>
+# 10 MIN
+<FilesMatch "\.(html|htm)$">
+Header set Cache-Control "max-age=60, private, proxy-revalidate"
+</FilesMatch>
+<FilesMatch "\.(php)$">
+Header set Cache-Control "max-age=6, private, proxy-revalidate"
+</FilesMatch>
+
+# Handle real errors with index.php
+ErrorDocument 403 /index.php?error404
+ErrorDocument 404 /index.php?error404
+
+#
+#
+#
+Order Deny,Allow
+<FilesMatch "\.ht(access|passwd)$">
+Deny from all
+</FilesMatch>
+
+#
+# challenging but recommended way of developing
+php_value allow_call_time_pass_reference 0
+
+#
+Options +FollowSymLinks
+RewriteEngine on
+
+#
+RewriteCond %{HTTP_HOST} ^domain.com [NC]
+RewriteRule ^(.*)$ http://www.domain.com/$1 [L,R=301]
+
+AddType application/octet-stream vcf
+
+#
+#
+RewriteCond %{REQUEST_URI} !^/index\.php$
+RewriteCond %{REQUEST_URI} !^/robots\.txt$
+RewriteCond %{REQUEST_URI} !^/img\.php$
+RewriteCond %{REQUEST_URI} !^/crontab\.php$
+
+RewriteCond %{REQUEST_URI} !^/downloads/
+RewriteCond %{REQUEST_URI} !^/slfx_framework/ajax_notify_v1.php
+
+RewriteCond %{REQUEST_URI} !\.(ico|png|gif|jpg|css|js|xml|rtf|pdf|vcf|html|ttf|woff|svg)$
+RewriteRule (.*) index.php [L]
